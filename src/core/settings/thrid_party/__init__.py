@@ -1,2 +1,1 @@
-from .drf import *
-from .swagger import *
+from .stripe import *
