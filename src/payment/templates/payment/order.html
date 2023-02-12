@@ -1,0 +1,54 @@
+<html lang="en">
+<head>
+    <title>Buy Item {{ item.pk }}</title>
+</head>
+<body>
+<div style="text-align: center">
+    {% for item in items %}
+        <div style="display: flex; align-items: center; justify-content: center">
+            <input aria-label="" type="checkbox" id="{{ item.pk }}" name="order">
+            <h1>{{ item.name }}</h1>
+            <p>{{ item.description }}</p>
+            <p>{{ item.price }}</p>
+        </div>
+    {% endfor %}
+
+    <button id="buy-button">Buy</button>
+</div>
+
+<script src="https://js.stripe.com/v3/"></script>
+<script type="text/javascript">
+
+    const buyButton = document.getElementById('buy-button')
+    buyButton.addEventListener('click', function () {
+        var stripe = Stripe('{{ stripe.secret }}');
+
+        const items = document.querySelectorAll('input[name=order]:checked');
+        const content = []
+
+        for (const item of items)
+        {
+            content.push(item.id)
+        }
+        if(content.length === 0)
+        {
+            return
+        }
+        fetch('http://localhost:8000/orders/', {
+            method: 'POST',
+            headers: {
+                'Accept': 'application/json',
+                'Content-Type': 'application/json',
+                'X-CSRFToken': '{{ csrf_token }}',
+
+            },
+            body: JSON.stringify(content),
+
+        })
+            .then(response => response.json())
+            .then(session => stripe.redirectToCheckout({sessionId: session.id}))
+
+    })
+</script>
+</body>
+</html>

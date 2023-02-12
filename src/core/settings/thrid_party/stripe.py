@@ -1,0 +1,4 @@
+import os
+
+STRIPE_API_PUB_KEY = os.getenv('STRIPE_API_PUB_KEY')
+STRIPE_API_SECRET_KEY = os.getenv('STRIPE_API_SECRET_KEY')
